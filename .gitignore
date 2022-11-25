@@ -1,32 +1,74 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+#include<iostream>
+using namespace std;
+//Функция вывода матрицы
+void printmatr(int **mas, int m) {
+	int i, j;
+	for (i = 0; i < m; i++) {
+		for (j = 0; j < m; j++)
+			cout << mas[i][j] << " ";
+		cout << endl;
+	}
+}
+//Получение матрицы без i-й строки и j-го столбца
+void getmatr(int **mas, int **p, int i, int j, int m) {
+	int ki, kj, di, dj;
+	di = 0;
+	for (ki = 0; ki < m - 1; ki++) { //проверка индекса строки
+		if (ki == i) di = 1;
+		dj = 0;
+		for (kj = 0; kj < m - 1; kj++) { //проверка индекса столбца
+			if (kj == j) dj = 1;
+			p[ki][kj] = mas[ki + di][kj + dj];
+		}
+	}
+}
+//рекурсивное вычисление определителя
+int determinant(int** mas, int m) {
+	int i, j, d, k, n;
+	int **p;
+	p = new int* [m];
+	for (i = 0; i < m; i++)
+		p[i] = new int[m];
+	j = 0; d = 0;
+	k = 1; //(-1) в степени i
+	n = m - 1;
+	if (m < 1) cout << "Matrix determinant isn't calculated.";
+	if (m == 1) {
+		d = mas[0][0];
+		return(d);
+	}
+	if (m == 2) {
+		d = mas[0][0] * mas[1][1] - (mas[1][0] * mas[0][1]);
+		return(d);
+	}
+	if (m > 2) {
+		for (i = 0; i < m; i++) {
+			getmatr(mas, p, i, 0, m);
+			cout << mas[i][j] << endl;
+			printmatr(p, n);
+			d = d + k * mas[i][0] * determinant(p, n);
+			k = -k;
+		}
+	}
+	return(d);
+}
+//основная функция
+int main() {
+	int m, i, j, d;
+	int** mas;
+	cout << "Enter the dimension of the square matrix: ";
+	cin >> m;
+	mas = new int* [m];
+	for (i = 0; i < m; i++) {
+		mas[i] = new int[m];
+		for (j = 0; j < m; j++) {
+			cout << "mas[" << i << "][" << j << "]= ";
+			cin >> mas[i][j];
+		}
+	}
+	printmatr(mas, m);
+	d = determinant(mas, m);
+	cout << "Matrix determinant is : " << d;
+	cin.get(); 
+	return 0;
+}
